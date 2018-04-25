@@ -1,0 +1,6 @@
+## Compiled ##
+*.pyc
+__pycache__/
+
+## Test file ##
+testGame.py
