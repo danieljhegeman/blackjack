@@ -16,13 +16,13 @@ class Hand():
     total = 0
     for card in self.cards:
       if card == 1:
-        ++aceCount
+        aceCount += 1
       else:
         total += card
     tens = 0
     while aceCount > 0:
       if countNoAces + 10 + aceCount - 1 <= 21:
-        --aceCount
+        aceCount -= 1
         total += 10
       else:
         break
