@@ -39,60 +39,54 @@ class Game():
       return
     self.originalPlayers.append(player)
 
-  def playRound(self):
-    self.round += 1
-    print "Round " + str(self.round)
-    remainingPlayers = []
-    noHits = True
-    for player in self.players:
-      play = raw_input(player.name + ", your current hand is " + str(player.hand.cards) + ": hit? (y/n) ")
-      if play.lower() == 'y':
-        noHits = False
-        player.hit(self.deck.dealOne())
-        if player.hand.isBusted():
-          print player.name, "has busted! Total:", player.hand.score()
-        else:  
-          remainingPlayers.append(player)
-      else:
-        remainingPlayers.append(player)
-    self.players = remainingPlayers
+  def playerTurn(self, player):
+    play = raw_input(player.name + ", your current hand is " + str(player.hand.cards) + ": hit? (y/n) ")
+    if play.lower() == 'y':
+      self.noHits = False
+      player.hit(self.deck.dealOne())
+      if player.hand.isBusted():
+        print player.name, "has busted! Total:", player.hand.score()
+      else:  
+        self.remainingPlayers.append(player)
+    else:
+      self.remainingPlayers.append(player)
+
+  def dealerTurn(self):
     dealerScore = self.dealer.score()
     if dealerScore < self.__class__.dealerLimit or (dealerScore == self.__class__.dealerLimit and 1 in self.dealer.hand.cards):
       self.dealer.hit(self.deck.dealOne())
-      noHits = False
-    if noHits:
-      winner = self.dealer
-      winningScore = winner.score()
-      for player in self.players:
-        playerScore = player.score()
-        if playerScore > winningScore:
-          winningScore = playerScore
-          winner = player
-      newGame = raw_input(winner.name + " wins. Play again? Enter any key.")
-      if newGame:
-        self.reset()
-        self.playGame()
-      else:
-        print "Goodbye!"    
-    if len(self.players) <= 1:
-      print "One or less players remaining:", len(self.players)
-      winner = False
-      if self.dealer.hand.isBusted():
-        winner = self.players[0]
-      elif not len(self.players):
-        winner = self.dealer
-      if winner:
-        print "Hands at the end:"
-        print self.dealer.name + ":", self.dealer.hand.cards
-        for player in self.originalPlayers:
-          print player.name + ":", player.hand.cards
-        newGame = raw_input(winner.name + " wins. Play again? Enter any key.")
-        if newGame:
-          self.reset()
-          self.playGame()
-        else:
-          print "Goodbye!"
-      else: 
-        self.playRound()
+      self.noHits = False
+    
+  def playRound(self):
+    self.round += 1
+    print "Round " + str(self.round)
+    self.remainingPlayers = []
+    self.noHits = True
+    for player in self.players:
+      self.playerTurn(player)
+    self.players = self.remainingPlayers
+    self.dealerTurn()
+    if self.noHits:
+      self.handleScores()
     else:
-      self.playRound()  
+      self.playRound()
+
+  def handleScores(self):
+    winner = self.dealer
+    winningScore = winner.score()
+    for player in self.players:
+      playerScore = player.score()
+      if playerScore > winningScore:
+        winningScore = playerScore
+        winner = player
+    print winner.name + " wins."
+    print "Hands at the end:"
+    print self.dealer.name + ":", self.dealer.hand.cards
+    for player in self.originalPlayers:
+      print player.name + ":", player.hand.cards
+    newGame = raw_input(winner.name + " wins. Play again? Enter any key.")
+    if newGame:
+      self.reset()
+      self.playGame()
+    else:
+      print "Goodbye!"
