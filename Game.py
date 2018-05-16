@@ -13,7 +13,8 @@ class Game():
     else:
       self.dealer = dealer
     self.originalPlayers = copy.copy(players)
-    self.reset(deck)
+    self.deck = deck
+    self.round = 0
 
   def reset(self, deck=None):
     if not deck:
@@ -25,13 +26,14 @@ class Game():
     self.dealer.hand = Hand()
 
   def playGame(self):
-    print(self.deck.cards)
+    self.reset()
     for _ in range(0, 2): #two cards to start
       self.dealer.hit(self.deck.dealOne())
       for player in self.players:
-        print("player cards", player.hand.cards)
-        print("added one card")
         player.hit(self.deck.dealOne())
+    for player in self.players:
+      print(player.name + "\'s hand:", player.hand.cards)
+    print(self.dealer.name + "\'s hand:", self.dealer.hand.cards)
     self.playRound()
 
   def addPlayer(self, player):
@@ -45,9 +47,10 @@ class Game():
     if play.lower() == 'y':
       self.noHits = False
       player.hit(self.deck.dealOne())
+      print(player.name + "\'s hand:", player.hand.cards)
       if player.hand.isBusted():
         print(player.name, "has busted! Total:", player.score())
-      else:  
+      else:
         self.remainingPlayers.append(player)
     else:
       self.remainingPlayers.append(player)
@@ -56,9 +59,10 @@ class Game():
     dealerScore = self.dealer.score()
     if dealerScore < self.__class__.dealerLimit or (dealerScore == self.__class__.dealerLimit and 1 in self.dealer.hand.cards):
       self.dealer.hit(self.deck.dealOne())
+      print(self.dealer.name + "\'s hand:", self.dealer.hand.cards)
       self.noHits = False
       if self.dealer.hand.isBusted():
-        print("Dealer has busted! Total:", self.dealer.score())
+        print(self.dealer.name, "has busted! Total:", self.dealer.score())
     
   def playRound(self):
     self.round += 1
@@ -76,7 +80,10 @@ class Game():
 
   def handleScores(self):
     winner = self.dealer
-    winningScore = winner.score()
+    if self.dealer.hand.isBusted():
+      winningScore = 0
+    else:
+      winningScore = winner.score()
     for player in self.players:
       playerScore = player.score()
       if playerScore > winningScore:
@@ -89,7 +96,6 @@ class Game():
       print(player.name + ":", player.hand.cards)
     newGame = input(winner.name + " wins. Play again? Enter any key.")
     if newGame:
-      self.reset()
       self.playGame()
     else:
       print("Goodbye!")
