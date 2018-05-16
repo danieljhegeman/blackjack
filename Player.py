@@ -8,7 +8,6 @@ class Player():
 
   def hit(self, card):
     self.hand.addCard(card)
-    print(self.name + "\'s hand:", self.hand.cards)
 
   def score(self):
     return self.hand.score()

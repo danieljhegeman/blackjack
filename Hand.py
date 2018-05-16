@@ -3,7 +3,6 @@ class Hand():
     if not cards:
       cards = []
     self.cards = cards
-    print("hand cards array:", self.cards)
 
   def addCard(self, card):
     self.cards.append(card)
