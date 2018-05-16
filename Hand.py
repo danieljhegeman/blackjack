@@ -3,7 +3,7 @@ class Hand():
     if not cards:
       cards = []
     self.cards = cards
-    print "hand cards array:", self.cards
+    print("hand cards array:", self.cards)
 
   def addCard(self, card):
     self.cards.append(card)
@@ -17,13 +17,11 @@ class Hand():
     for card in self.cards:
       if card == 1:
         aceCount += 1
-      else:
-        total += card
-    tens = 0
+      total += card
     while aceCount > 0:
-      if countNoAces + 10 + aceCount - 1 <= 21:
+      if total + 9 <= 21:
         aceCount -= 1
-        total += 10
+        total += 9
       else:
         break
     return total

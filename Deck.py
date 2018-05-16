@@ -6,10 +6,10 @@ class Deck():
       self.cards = cards 
     else: 
       self.cards = self.generateDeck()
-    print "cards in deck:", self.cards
+    print("cards in deck:", self.cards)
     self.shuffle()
     self.shuffle()
-    print "shuffled deck:", self.cards
+    print("shuffled deck:", self.cards)
  
   def generateDeck(self): 
     cards = [] 
